@@ -1,0 +1,12 @@
+{
+  "name": "backtracking",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^24.5.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
