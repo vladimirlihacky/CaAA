@@ -205,7 +205,7 @@ class WildcardSearchTree extends SearchTree {
             searchTree
                 .search(input.text)
                 .map(entry => entry.at)
-                .toSorted()
+                .sort((a, b) => a - b)
                 .join("\n")
         )
     })
