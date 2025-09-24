@@ -40,7 +40,6 @@ export class SearchTree {
         console.log('[SET_LINKS] Начало установки fail-ссылок');
         const queue: Node[] = [];
 
-        // Инициализация очереди детьми корня
         for (const char in this.root.children) {
             const child = this.root.children[char];
             console.log(`[SET_LINKS] Инициализация ребенка корня "${char}"`);
@@ -61,7 +60,7 @@ export class SearchTree {
 
                 let fail = node.fail;
                 console.log(`[SET_LINKS] Поиск fail-узла для ребенка "${char}". Начальный fail:`, 
-                    fail === this.root ? 'корень' : `узел с детьми [${Object.keys(fail!.children).join(', ')}]`);
+                    fail === this.root ? 'корень' : `узел с детями [${Object.keys(fail!.children).join(', ')}]`);
 
                 while (fail && !(char in fail.children)) {
                     console.log(`[SET_LINKS] Fail-узел не имеет ребенка "${char}", переход к следующему fail-узлу`);
@@ -76,7 +75,6 @@ export class SearchTree {
                     console.log(`[SET_LINKS] Найден fail-узел для ребенка "${char}"`);
                 }
 
-                // Копируем выходы из fail-узла
                 const outputsBefore = [...child.output];
                 child.output.push(...child.fail.output);
                 console.log(`[SET_LINKS] Обновление выходов ребенка "${char}":`, {
@@ -125,6 +123,62 @@ export class SearchTree {
         return results;
     }
 
+    public getMaxEdgesFromNode(): number {
+        console.log('[MAX_EDGES] Начало вычисления максимального количества дуг из одной вершины');
+        let maxEdges = 0;
+        const queue: Node[] = [this.root];
+
+        while (queue.length > 0) {
+            const node = queue.shift()!;
+            const edgeCount = Object.keys(node.children).length;
+            
+            console.log(`[MAX_EDGES] Узел имеет ${edgeCount} исходящих дуг. Текущий максимум: ${maxEdges}`);
+            
+            if (edgeCount > maxEdges) {
+                maxEdges = edgeCount;
+                console.log(`[MAX_EDGES] Обновлен максимум: ${maxEdges}`);
+            }
+
+            for (const child of Object.values(node.children)) {
+                queue.push(child);
+            }
+        }
+
+        console.log(`[MAX_EDGES] Максимальное количество дуг из одной вершины: ${maxEdges}`);
+        return maxEdges;
+    }
+
+    public cutPatternsFromText(text: string): string {
+        console.log(`[CUT_PATTERNS] Начало вырезания паттернов из текста: "${text}"`);
+        
+        const results = this.search(text);
+        console.log(`[CUT_PATTERNS] Найдено вхождений паттернов: ${results.length}`);
+
+        const keepChars = new Array(text.length).fill(true);
+        
+        for (const result of results) {
+            const start = result.at;
+            const end = start + result.pattern[0].length - 1;
+            console.log(`[CUT_PATTERNS] Вырезаем паттерн "${result.pattern[0]}" с позиции ${start} до ${end}`);
+            
+            for (let i = start; i <= end; i++) {
+                if (i >= 0 && i < text.length) {
+                    keepChars[i] = false;
+                }
+            }
+        }
+
+        let remainingText = '';
+        for (let i = 0; i < text.length; i++) {
+            if (keepChars[i]) {
+                remainingText += text[i];
+            }
+        }
+
+        console.log(`[CUT_PATTERNS] Остаток строки после вырезания: "${remainingText}"`);
+        return remainingText;
+    }
+
     constructor(patterns: string[]) {
         console.log('[CONSTRUCTOR] Создание SearchTree с паттернами:', patterns);
         this.patterns = patterns.map((p, i) => [p, i] as Pattern);
@@ -138,6 +192,22 @@ export class SearchTree {
         this.setLinks();
         console.log('[CONSTRUCTOR] Дерево построено');
     }
+}
+
+export function processTextWithSearchTree(patterns: string[], text: string) {
+    console.log('=== ОБРАБОТКА ТЕКСТА С ПОИСКОВЫМ ДЕРЕВОМ ===');
+    const searchTree = new SearchTree(patterns);
+    
+    const maxEdges = searchTree.getMaxEdgesFromNode();
+    console.log(`✓ Максимальное количество дуг из одной вершины: ${maxEdges}`);
+    
+    const remainingText = searchTree.cutPatternsFromText(text);
+    console.log(`✓ Остаток строки после вырезания паттернов: "${remainingText}"`);
+    
+    return {
+        maxEdges,
+        remainingText
+    };
 }
 
 export class WildcardSearchTree extends SearchTree {
