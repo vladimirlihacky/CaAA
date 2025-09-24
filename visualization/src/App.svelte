@@ -7,7 +7,7 @@ import {
   Levenshtein as Base, 
   type LevenshteinParams, 
   type Operation 
-} from "caaa_levenshtein";
+} from "../../lb3/src";
 
 import { fade as transition } from "svelte/transition";
 import { cubicOut as easing } from "svelte/easing";

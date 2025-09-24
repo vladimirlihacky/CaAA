@@ -106,10 +106,10 @@ class Board {
 
 (async () => {
     const io = new IO({ input: process.stdin, output: process.stdout })
-    const { side } = await io.read({ side: "number" })
+    const { width, height } = await io.read({ width: "number", height: "number" })
 
     console.log(
-        new Board(side, side)
+        new Board(width, height)
         .solve()
         .at(0)!
         .map(({ x, y, side }) => `${x} ${y} ${side}`)

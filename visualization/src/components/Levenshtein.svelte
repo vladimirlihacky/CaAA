@@ -1,4 +1,4 @@
 <script lang="ts">
-    import { Levenshtein } from "caaa_levenshtein";
+    import { Levenshtein } from "../../../lb3/src";
 </script>
 
