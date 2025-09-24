@@ -75,7 +75,7 @@ const levenshtein = new Levenshtein({ additionalOperations: [
     <Container title="Operation costs">
       {#each levenshtein.operations as operation, i }
         <Accordion title={operation.name} group="operations" expanded>
-          <TextInput bind:value={operation.cost} />
+          <TextInput type="number" bind:value={operation.cost} />
         </Accordion>
       {/each}
     </Container>

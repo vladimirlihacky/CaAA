@@ -4,10 +4,12 @@
     type Props = {
         value?: string | number,
         label?: string,
+        type?: "text" | "number"
     }
     let { 
         value = $bindable(), 
         label, 
+        type = "text"
     }: Props = $props();
 
     let id = nanoid();
@@ -17,7 +19,7 @@
     <label class="input-label" for={id}>
         {label}
     </label>
-    <input class="input input-text" name={id} min="0" type={typeof value == "number" ? "number" : "text"} bind:value={value}>
+    <input class="input input-text" name={id} min="0" type={type} bind:value={value}>
 </div>
 
 <style>
