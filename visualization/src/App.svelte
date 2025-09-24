@@ -19,6 +19,8 @@ class Levenshtein extends Base {
   constructor(params: LevenshteinParams) {
     super(params);
 
+    console.log(this.additionalOperations)
+
     const _operations: Operation[] = $state([])
     for(const operation of this.operations) {
       const _operation = $state(operation) 
@@ -41,7 +43,24 @@ class Levenshtein extends Base {
   }
 }
 
-const levenshtein = new Levenshtein({})
+const levenshtein = new Levenshtein({ additionalOperations: [
+  {
+    name: "double_replace", 
+    cost: 1, 
+    call: function(matrix, i, j, a, b) {
+      const replaced = [b[j - 2], b[j - 1]]
+      if(i > 1 && j > 1 && !(replaced.includes(a[i - 2]) || replaced.includes(a[i - 1]))) {
+        return {
+            cost: matrix[i - 2][j - 2].cost + this.cost,
+            i: i - 2, 
+            j: j - 2
+        }
+      }
+
+      return { cost: Infinity, i, j };
+    }
+  }
+] })
 </script>
 
 <main>
@@ -125,7 +144,7 @@ const levenshtein = new Levenshtein({})
     gap: 0.25em;
     align-items: start;
     height: 80px;
-    aspect-ratio: 16/9;
+    width: 150px;
     background-color: var(--background-secondary);
     padding: 1rem;
   }

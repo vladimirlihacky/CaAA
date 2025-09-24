@@ -100,6 +100,7 @@ export class Levenshtein {
         this.insert.cost = costInsert ?? 1; 
         this.replace.cost = costReplace ?? 1;
         this.additionalOperations = additionalOperations ?? [];
+        this.operations.push(...this.additionalOperations)
     }
 
     public matrix(a: string, b: string): Matrix<Step> {
